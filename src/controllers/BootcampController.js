@@ -3,29 +3,58 @@ import Bootcamp from '../models/Bootcamp'
 class BootcampController {
 
   async index(req, res) {
-    return res.status(200).json({ok: true, data: "All bootcamps"})
+    try {
+      const bootcamps = await Bootcamp.find({})
+      return res.status(200).json({success: true, data: bootcamps})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
   }
 
   async show(req, res) {
-    return res.status(200).json({ok: true, data: `Show bootcamp ${req.params.id}`})
+    try {
+      const { id } = req.params
+      const bootcamp = await Bootcamp.findById(id)
+
+      return res.status(200).json({success: true, data: bootcamp})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
   }
 
   async store(req, res) {
     try {
       const newBootcamp = await Bootcamp.create(req.body)
-      return res.status(201).json({sucess: true, data: newBootcamp})
+      return res.status(201).json({success: true, data: newBootcamp})
     } catch (err) {
-      return res.status(400).json({sucess: false, error: err.message})
+      return res.status(400).json({success: false, error: err.message})
     }
-    
   }
 
   async delete(req, res) {
-    return res.status(200).json({ok: true, data: "Deleted Bootcamp"})
+    try {
+      const { id } = req.params
+      const bootcamp = await Bootcamp.findOneAndDelete({_id: id}, () => {
+        console.log("Deleted the bootcamp ", id)
+      })
+
+      return res.status(200).json({success: true, data: bootcamp})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
   }
 
   async update(req, res) {
-    return res.status(200).json({ok: true, data: "Updated bootcamp"})
+    try {
+      const { id } = req.params
+      const bootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, () => {
+        console.log(`Bootcamp updated ${bootcamp._id}`)
+      })
+
+      return res.status(200).json({success: true, data: bootcamp}) 
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
   }
 
 }
