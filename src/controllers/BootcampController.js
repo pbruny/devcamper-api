@@ -1,3 +1,5 @@
+import Bootcamp from '../models/Bootcamp'
+
 class BootcampController {
 
   async index(req, res) {
@@ -9,7 +11,13 @@ class BootcampController {
   }
 
   async store(req, res) {
-    return res.status(201).json({ok: true, data: "Created bootcamp"})
+    try {
+      const newBootcamp = await Bootcamp.create(req.body)
+      return res.status(201).json({sucess: true, data: newBootcamp})
+    } catch (err) {
+      return res.status(400).json({sucess: false, error: err.message})
+    }
+    
   }
 
   async delete(req, res) {

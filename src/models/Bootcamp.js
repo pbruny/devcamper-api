@@ -11,9 +11,9 @@ const BootcampSchema = new Mongoose.Schema({
   slug: {
     type: String,
   },
-  decscription: {
+  description: {
     type: String,
-    required: [true, 'Please, add a name'],
+    required: [true, 'Please, add a description'],
     maxlength: [500, 'Description cannot be more than 500 characters'],
   },
   website: {
@@ -42,14 +42,12 @@ const BootcampSchema = new Mongoose.Schema({
     type: {
       type: String, 
       enum: ['Point'],
-      required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
       index: '2dsphere',
     },
-    fomattedAdress: String,
+    formattedAdress: String,
     street: String,
     city: String,
     state: String,
