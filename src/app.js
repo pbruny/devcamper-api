@@ -1,6 +1,8 @@
 import express from 'express'
 import logger from './middlewares/logger'
 import routes from './routes'
+import 'dotenv/config'
+import './config/database'
 
 class App {
   constructor() {
