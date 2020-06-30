@@ -5,7 +5,7 @@ class BootcampController {
   async index(req, res) {
     try {
       const bootcamps = await Bootcamp.find({})
-      return res.status(200).json({success: true, data: bootcamps})
+      return res.status(200).json({success: true, count: bootcamps.length, data: bootcamps})
     } catch (err) {
       return res.status(400).json({success: false, error: err.message})
     }
@@ -15,6 +15,10 @@ class BootcampController {
     try {
       const { id } = req.params
       const bootcamp = await Bootcamp.findById(id)
+
+      if (!bootcamp) {
+        return res.status(400).json({success: false})
+      }
 
       return res.status(200).json({success: true, data: bootcamp})
     } catch (err) {
@@ -34,9 +38,11 @@ class BootcampController {
   async delete(req, res) {
     try {
       const { id } = req.params
-      const bootcamp = await Bootcamp.findOneAndDelete({_id: id}, () => {
-        console.log("Deleted the bootcamp ", id)
-      })
+      const bootcamp = await Bootcamp.findOneAndDelete({_id: id})
+
+      if (!bootcamp) {
+        return res.status(400).json({success: false})
+      }
 
       return res.status(200).json({success: true, data: bootcamp})
     } catch (err) {
@@ -47,9 +53,14 @@ class BootcampController {
   async update(req, res) {
     try {
       const { id } = req.params
-      const bootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, () => {
-        console.log(`Bootcamp updated ${bootcamp._id}`)
+      const bootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
+        new: true,
+        runValidators: true
       })
+
+      if (!bootcamp) {
+        return res.status(400).json({success: false})
+      }
 
       return res.status(200).json({success: true, data: bootcamp}) 
     } catch (err) {
