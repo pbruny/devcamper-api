@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "migrate:import": "sucrase-node ./src/migrations/seeder.js -i",
+    "migrate:destroy": "sucrase-node ./src/migrations/seeder.js -d"
   },
   "keywords": [],
   "author": "",
