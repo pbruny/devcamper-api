@@ -1,5 +1,6 @@
 import Mongoose from 'mongoose'
 import Slugify from 'slugify'
+import Geocoder from '../utils/geocoder'
 
 const BootcampSchema = new Mongoose.Schema({
   name: {
@@ -103,6 +104,23 @@ const BootcampSchema = new Mongoose.Schema({
 
 BootcampSchema.pre('save', function(next) {
   this.slug = Slugify(this.name, { lower: true })
+  next()
+})
+
+BootcampSchema.pre('save', async function(next) {
+  const location = await Geocoder.geocode(this.address)
+  this.location = {
+    type: 'Point',
+    coordinates: [location[0].longitude, location[0].latitude],
+    formattedAdress: location[0].formattedAdress,
+    street: location[0].streetName,
+    city: location[0].city,
+    state: location[0].stateCode,
+    zipcode: location[0].zipcode,
+    country: location[0].countryCode,
+  }
+
+  this.address = undefined
   next()
 })
 
