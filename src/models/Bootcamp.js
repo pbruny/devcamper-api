@@ -1,4 +1,5 @@
 import Mongoose from 'mongoose'
+import Slugify from 'slugify'
 
 const BootcampSchema = new Mongoose.Schema({
   name: {
@@ -98,6 +99,11 @@ const BootcampSchema = new Mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+})
+
+BootcampSchema.pre('save', function(next) {
+  this.slug = Slugify(this.name, { lower: true })
+  next()
 })
 
 export default Mongoose.model('Bootcamp', BootcampSchema)
