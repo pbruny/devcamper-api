@@ -3,6 +3,7 @@ import fs from 'fs'
 import { resolve } from 'path'
 import Mongoose from 'mongoose'
 import Bootcamp from '../models/Bootcamp'
+import Course from '../models/Course'
 
 Mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -18,9 +19,17 @@ const bootcamps = JSON.parse(
   )
 )
 
+const courses = JSON.parse(
+  fs.readFileSync(
+    resolve(__dirname, '..', 'data', 'courses.json'), 
+    'utf-8'
+  )
+)
+
 const importData = async () => {
   try {
     await Bootcamp.create(bootcamps)
+    await Course.create(courses)
 
     console.log('Data imported')
     process.exit()
@@ -32,6 +41,7 @@ const importData = async () => {
 const destroyData = async () => {
   try {
     await Bootcamp.deleteMany()
+    await Course.deleteMany()
 
     console.log('Data destroyed')
     process.exit()
