@@ -16,7 +16,7 @@ class BootcampController {
       let queryString = JSON.stringify(reqQueryCopy)
       queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, wordMatch => `$${wordMatch}`)
 
-      query = Bootcamp.find(JSON.parse(queryString))
+      query = Bootcamp.find(JSON.parse(queryString)).populate('courses')
 
       if(req.query.select) {
         const fields = req.query.select.split(',').join(' ')
@@ -109,12 +109,14 @@ class BootcampController {
   async delete(req, res) {
     try {
       const { id } = req.params
-      const bootcamp = await Bootcamp.findOneAndDelete({_id: id})
+      const bootcamp = await Bootcamp.findById({_id: id})
 
       if (!bootcamp) {
         return res.status(400).json({success: false})
       }
 
+      bootcamp.remove()
+      
       return res.status(200).json({success: true, data: bootcamp})
     } catch (err) {
       return res.status(400).json({success: false, error: err.message})
