@@ -10,8 +10,20 @@ class CourseController {
       res.status(400).json({success: false, error: err.message})
     }
   }
-
   async show(req, res) {
+    try {
+      const course = await Course.findById(req.params.id).populate({
+        path: 'bootcamp',
+        select: 'name description'
+      })
+
+      res.status(200).json({success: true, data: course})
+    } catch (err) {
+      res.status(400).json({success: false, error: err.message})
+    }
+  }
+
+  async showByBootcamp(req, res) {
     try{
       const coursesByBootcamp = await Course.find({
         bootcamp: req.params.bootcampId
