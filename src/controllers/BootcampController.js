@@ -1,4 +1,5 @@
 import Bootcamp from '../models/Bootcamp'
+import Geocoder from '../utils/geocoder'
 
 class BootcampController {
 
@@ -25,6 +26,26 @@ class BootcampController {
       return res.status(400).json({success: false, error: err.message})
     }
   }
+
+  async showBootcampsInRadius(req, res) {
+    const { zipcode, distance } = req.params
+    const earthRadiusInKm = 6378
+    const loc = await Geocoder.geocode(zipcode)
+    const { latitude, longitude } = loc[0]
+
+    const radius = distance / earthRadiusInKm
+
+    const bootcamps = await Bootcamp.find({
+      location:{
+        $geoWithin: { 
+          $centerSphere: [[ longitude, latitude], radius] 
+        }
+      }
+    })
+
+    return res.json({count: bootcamps.length, data: bootcamps})
+  }
+
 
   async store(req, res) {
     try {
