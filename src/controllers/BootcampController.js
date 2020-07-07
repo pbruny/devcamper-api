@@ -5,7 +5,32 @@ class BootcampController {
 
   async index(req, res) {
     try {
-      const bootcamps = await Bootcamp.find({})
+      let query
+
+      const reqQueryCopy = { ...req.query }
+
+      const removeFields = ['select', 'sort']
+
+      removeFields.forEach(param => delete reqQueryCopy[param])
+
+      let queryString = JSON.stringify(reqQueryCopy)
+      queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, wordMatch => `$${wordMatch}`)
+
+      query = Bootcamp.find(JSON.parse(queryString))
+
+      if(req.query.select) {
+        const fields = req.query.select.split(',').join(' ')
+        query = query.select(fields)
+      }
+
+      if(req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ')
+        query = query.sort(sortBy)
+      }
+
+      const bootcamps = await query
+
+
       return res.status(200).json({success: true, count: bootcamps.length, data: bootcamps})
     } catch (err) {
       return res.status(400).json({success: false, error: err.message})
