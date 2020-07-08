@@ -82,7 +82,7 @@ class CourseController {
         return res.status(404).json({success: false, error: `Course with id ${req.params.id} not found`})
       }
 
-      course.remove()
+      await course.remove()
 
       return res.status(200).json({success: true, message: `Course with id ${req.params.id} successfully deleted`})
     } catch (err) {
