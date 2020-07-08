@@ -2,7 +2,7 @@ import Bootcamp from '../models/Bootcamp'
 
 class FileController {
   async store(req, res) {
-    const { originalname: name, filename: path } = req.file
+    const { filename: path } = req.file
 
     const file = await Bootcamp.findByIdAndUpdate(req.params.id, {
       photo: path
