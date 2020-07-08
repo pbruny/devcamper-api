@@ -2,6 +2,7 @@ import express from 'express'
 import 'dotenv/config'
 import logger from './middlewares/logger'
 import Youch from 'youch'
+import { resolve } from 'path'
 import routes from './routes'
 import './config/database'
 
@@ -16,6 +17,7 @@ class App {
 
   middlewares() {
     this.server.use(logger)
+    this.server.use('/uploads', express.static(resolve(__dirname, '..', 'uploads')))
     this.server.use(express.json())
   }
 

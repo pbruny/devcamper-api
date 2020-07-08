@@ -1,9 +1,13 @@
 import { Router } from 'express'
 import BootcampController from './controllers/BootcampController'
 import CourseController from './controllers/CourseController'
+import multer from 'multer'
+import multerconfig from './config/multer'
+import FileController from './controllers/FileController'
 
 
 const routes = new Router()
+const upload = multer(multerconfig)
 
 routes.get('/api/v1/bootcamps', BootcampController.index)
 routes.get('/api/v1/bootcamps/:id', BootcampController.show)
@@ -20,4 +24,5 @@ routes.get('/api/v1/courses/:id', CourseController.show)
 routes.delete('/api/v1/courses/:id', CourseController.delete)
 routes.put('/api/v1/courses/:id', CourseController.update)
 
+routes.post('/api/v1/:id/photo', upload.single('file'), FileController.store)
 export default routes
