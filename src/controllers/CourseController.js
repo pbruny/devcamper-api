@@ -6,9 +6,9 @@ class CourseController {
     try {
       const courses = await Course.find()
   
-      res.status(200).json({success: true, count: courses.length, data: courses})
+      return res.status(200).json({success: true, count: courses.length, data: courses})
     } catch (err) {
-      res.status(400).json({success: false, error: err.message})
+      return res.status(400).json({success: false, error: err.message})
     }
   }
   async show(req, res) {
@@ -18,9 +18,9 @@ class CourseController {
         select: 'name description'
       })
 
-      res.status(200).json({success: true, data: course})
+      return res.status(200).json({success: true, data: course})
     } catch (err) {
-      res.status(400).json({success: false, error: err.message})
+      return res.status(400).json({success: false, error: err.message})
     }
   }
 
@@ -33,9 +33,9 @@ class CourseController {
         select: 'name description'
       })
   
-      res.status(200).json({success: true, count: coursesByBootcamp.length, data: coursesByBootcamp})
+      return res.status(200).json({success: true, count: coursesByBootcamp.length, data: coursesByBootcamp})
     } catch (err) {
-      res.status(400).json({success: false, error: err.message})
+      return res.status(400).json({success: false, error: err.message})
     }
   }
 
@@ -53,7 +53,40 @@ class CourseController {
 
       return res.status(201).json({success: true, data: course})
     } catch (err) {
-      res.status(400).json({success: false, error: err.message})
+      return res.status(400).json({success: false, error: err.message})
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+      })
+
+      if(!course) {
+        return res.status(404).json({success: false, error: `Course with id ${req.params.id} not found`})
+      }
+
+      return res.status(200).json({success: true, message: `Course with id ${req.params.id} successfully updated`, data: course})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      const course = await Course.findById(req.params.id)
+
+      if(!course) {
+        return res.status(404).json({success: false, error: `Course with id ${req.params.id} not found`})
+      }
+
+      course.remove()
+
+      return res.status(200).json({success: true, message: `Course with id ${req.params.id} successfully deleted`})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
     }
   }
 }
