@@ -1,5 +1,5 @@
 import User from '../models/User'
-
+import SendCookie from '../utils/sendCookieToken'
 class UserController {
   async store(req, res) {
     try {
@@ -12,12 +12,10 @@ class UserController {
         role
       })
 
-      const token = user.getSignedJWTToken()
-
-      return res.status(201).json({success: true, token})
+      return SendCookie(user, 200, res)
       
     } catch (err) {
-      return res.status(400).json({success: false, err})
+      return res.status(400).json({success: false, error: err.message})
     }
   }
 
@@ -40,9 +38,15 @@ class UserController {
       return res.status(401).json({success: false, error: 'Please provide valid credentials'})
     }
 
-    const token = user.getSignedJWTToken()
+    // const options = {
+    //   expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 86400000),
+    //   httpOnly: true
+    // }
 
-    return res.status(200).json({success: true, token})
+    // const token = user.getSignedJWTToken()
+
+    // return res.status(200).cookie('token', token, options).json({success: true, token})
+    return SendCookie(user, 200, res)
   }
 }
 
