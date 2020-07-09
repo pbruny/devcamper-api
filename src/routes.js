@@ -4,6 +4,7 @@ import CourseController from './controllers/CourseController'
 import multer from 'multer'
 import multerconfig from './config/multer'
 import FileController from './controllers/FileController'
+import UserController from './controllers/UserController'
 
 
 const routes = new Router()
@@ -25,4 +26,7 @@ routes.delete('/api/v1/courses/:id', CourseController.delete)
 routes.put('/api/v1/courses/:id', CourseController.update)
 
 routes.post('/api/v1/:id/photo', upload.single('file'), FileController.store)
+
+routes.post('/api/v1/users', UserController.store)
+routes.post('/api/v1/users/login', UserController.login)
 export default routes
