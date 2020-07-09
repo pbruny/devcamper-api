@@ -38,15 +38,21 @@ class UserController {
       return res.status(401).json({success: false, error: 'Please provide valid credentials'})
     }
 
-    // const options = {
-    //   expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 86400000),
-    //   httpOnly: true
-    // }
-
-    // const token = user.getSignedJWTToken()
-
-    // return res.status(200).cookie('token', token, options).json({success: true, token})
     return SendCookie(user, 200, res)
+  }
+
+  async showLoggedUser(req, res) {
+    try {
+      const user = await User.findById(req.user.id)
+
+    if(!user) {
+      return res.status(400).json({success: false, error: 'User not found and/or invalid credentials'})
+    }
+
+    return res.status(200).json({success: true, user})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
   }
 }
 

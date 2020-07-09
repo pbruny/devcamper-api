@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import User from '../models/User'
 import { promisify } from 'util'
 
 export default async (req, res, next) => {
@@ -13,10 +14,15 @@ export default async (req, res, next) => {
   try {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
 
-    req.userId = decoded.id
+    req.user = await User.findById(decoded.id)
+    console.log(req.user)
+
+    if(!req.user) {
+      return res.status(404).json({success: false, error: 'User not found'})
+    }
 
     return next()
   } catch (error) {
-    return res.status(401).json({ error: 'Token inavlid' })
+    return res.status(401).json({ error: 'Token inavalid' })
   }
 }
