@@ -112,14 +112,14 @@ class BootcampController {
       const bootcamp = await Bootcamp.findById({_id: id})
 
       if (!bootcamp) {
-        return res.status(400).json({success: false})
+        return res.status(404).json({success: false})
       }
 
       bootcamp.remove()
       
       return res.status(200).json({success: true, data: bootcamp})
     } catch (err) {
-      return res.status(400).json({success: false, error: err.message})
+      return res.status(401).json({success: false, error: err.message})
     }
   }
 
@@ -132,12 +132,12 @@ class BootcampController {
       })
 
       if (!bootcamp) {
-        return res.status(400).json({success: false})
+        return res.status(404).json({success: false})
       }
 
       return res.status(200).json({success: true, data: bootcamp}) 
     } catch (err) {
-      return res.status(400).json({success: false, error: err.message})
+      return res.status(401).json({success: false, error: err.message})
     }
   }
 
