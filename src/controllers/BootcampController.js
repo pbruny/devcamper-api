@@ -99,6 +99,14 @@ class BootcampController {
 
   async store(req, res) {
     try {
+      req.body.user = req.user.id
+
+      const publishedBootacamp = await Bootcamp.findOne({ user: req.user.id })
+
+      if(publishedBootacamp && req.user.role !== 'admin') {
+        return res.status(403).json({success: false, error: `Users with ${req.user.role} role can only add 1 bootcamp`})
+      }
+
       const newBootcamp = await Bootcamp.create(req.body)
       return res.status(201).json({success: true, data: newBootcamp})
     } catch (err) {
