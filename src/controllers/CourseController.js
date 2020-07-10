@@ -49,6 +49,12 @@ class CourseController {
         return res.status(404).json({success: false, error: `Bootcamp with id ${req.params.bootcampId} not found`})
       }
 
+      if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return res.status(400).json({success: false, error: `User with id of ${req.user.id} is not the owner of this bootcamp`})
+      }
+
+      req.body.user = bootcamp.user
+
       const course = await Course.create(req.body)
 
       return res.status(201).json({success: true, data: course})
@@ -59,16 +65,22 @@ class CourseController {
 
   async update(req, res) {
     try {
-      const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-      })
+      const course = await Course.findById(req.params.id)
 
       if(!course) {
         return res.status(404).json({success: false, error: `Course with id ${req.params.id} not found`})
       }
 
-      return res.status(200).json({success: true, message: `Course with id ${req.params.id} successfully updated`, data: course})
+      if(course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return res.status(400).json({success: false, error: `User with id of ${req.user.id} is not the owner of this bootcamp`})
+      }
+
+      const updateCourse = await Course.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+      })
+
+      return res.status(200).json({success: true, message: `Course with id ${req.params.id} successfully updated`, data: updateCourse})
     } catch (err) {
       return res.status(400).json({success: false, error: err.message})
     }
@@ -80,6 +92,10 @@ class CourseController {
 
       if(!course) {
         return res.status(404).json({success: false, error: `Course with id ${req.params.id} not found`})
+      }
+
+      if(course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return res.status(400).json({success: false, error: `User with id of ${req.user.id} is not the owner of this bootcamp`})
       }
 
       await course.remove()
