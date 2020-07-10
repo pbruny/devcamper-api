@@ -104,7 +104,7 @@ class BootcampController {
       const publishedBootacamp = await Bootcamp.findOne({ user: req.user.id })
 
       if(publishedBootacamp && req.user.role !== 'admin') {
-        return res.status(403).json({success: false, error: `Users with ${req.user.role} role can only add 1 bootcamp`})
+        return res.status(401).json({success: false, error: `Users with ${req.user.role} role can only add 1 bootcamp`})
       }
 
       const newBootcamp = await Bootcamp.create(req.body)
@@ -123,6 +123,10 @@ class BootcampController {
         return res.status(404).json({success: false})
       }
 
+      if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return res.status(400).json({success: false, error: `User with id of ${req.user.id} is not the owner of this bootcamp`})
+      }
+      
       bootcamp.remove()
       
       return res.status(200).json({success: true, data: bootcamp})
@@ -134,16 +138,22 @@ class BootcampController {
   async update(req, res) {
     try {
       const { id } = req.params
-      const bootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
-        new: true,
-        runValidators: true
-      })
+      const bootcamp = await Bootcamp.findById(id)
 
       if (!bootcamp) {
         return res.status(404).json({success: false})
       }
 
-      return res.status(200).json({success: true, data: bootcamp}) 
+      if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return res.status(400).json({success: false, error: `User with id of ${req.user.id} is not the owner of this bootcamp`})
+      }
+
+      const updateBootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
+        new: true,
+        runValidators: true
+      })
+
+      return res.status(200).json({success: true, data: updateBootcamp}) 
     } catch (err) {
       return res.status(401).json({success: false, error: err.message})
     }
