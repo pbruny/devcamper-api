@@ -32,5 +32,6 @@ routes.post('/api/v1/:id/photo', upload.single('file'), AuthMiddleware, VerifyRo
 routes.post('/api/v1/users', UserController.store)
 routes.post('/api/v1/users/login', UserController.login)
 routes.get('/api/v1/users/me', AuthMiddleware, UserController.showLoggedUser)
+routes.post('/api/v1/users/forgotpassword', UserController.forgotPassword)
 
 export default routes

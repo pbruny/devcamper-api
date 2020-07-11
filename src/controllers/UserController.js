@@ -54,6 +54,25 @@ class UserController {
       return res.status(400).json({success: false, error: err.message})
     }
   }
+
+  async forgotPassword(req, res) {
+    try {
+      const { email } = req.body
+      const user = await User.findOne({ email })
+
+      if(!user) {
+        return res.status(400).json({success: false, error: 'User not found and/or invalid credentials'})
+      }
+
+      const token = user.getResetPasswordToken()
+
+      await user.save({ validateBeforeSave: false })
+
+      res.status(200).json({success: true, token})
+    } catch (err) {
+      return res.status(400).json({success: false, error: err.message})
+    }
+  }
 }
 
 export default new UserController()
